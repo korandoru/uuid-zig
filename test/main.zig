@@ -3,6 +3,8 @@ const testing = std.testing;
 
 const uuid = @import("uuid");
 
-test "basic add functionality" {
-    try testing.expect(uuid.add(3, 7) == 10);
+test "uuid initialization" {
+    const u = uuid.UUID.new(42, 0);
+    try testing.expect(u.get_msb() == 42);
+    try testing.expect(u.get_lsb() == 0);
 }
