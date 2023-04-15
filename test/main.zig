@@ -8,3 +8,8 @@ test "uuid initialization" {
     try testing.expect(u.get_msb() == 42);
     try testing.expect(u.get_lsb() == 0);
 }
+
+test "uuid format" {
+    const u = uuid.UUID.new(17461568127633409033, 11710601912988811980);
+    try testing.expectFmt("f253f3b2-5cdf-4409-a284-6a64f9b542cc", "{s}", .{u});
+}
