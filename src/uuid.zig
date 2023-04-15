@@ -67,4 +67,8 @@ pub const UUID = struct {
     pub fn get_lsb(self: UUID) u64 {
         return self.lsb;
     }
+
+    pub fn version(self: UUID) u64 {
+        return (self.msb >> 12) & 0x0F;
+    }
 };
