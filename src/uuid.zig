@@ -28,17 +28,16 @@ pub const UUID = struct {
         return UUID{ .msb = msb, .lsb = lsb };
     }
 
-    fn format_unsigned_long(value: u64, shift: u32, buf: *[36]u8, offset: u32, len: u32) void {
-        _ = shift;
+    fn format_unsigned_long(value: u64, shift: u4, buf: *[36]u8, offset: u32, len: u32) void {
         var pos: u32 = offset + len;
         var val: u64 = value;
-        const radix: u32 = 1 << 4;
+        const radix: u32 = @intCast(u32, 1) << shift;
         const mask: u32 = radix - 1;
 
         while (pos > offset) {
             pos -= 1;
             buf[pos] = digits[val & mask];
-            val >>= 4;
+            val >>= shift;
         }
     }
 
