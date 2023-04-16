@@ -34,6 +34,7 @@ pub const UUID = struct {
         const radix: u32 = @intCast(u32, 1) << shift;
         const mask: u32 = radix - 1;
 
+        assert(pos > offset); // do-while
         while (pos > offset) {
             pos -= 1;
             buf[pos] = digits[val & mask];
