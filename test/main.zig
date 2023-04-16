@@ -29,3 +29,9 @@ test "uuid given v4" {
     try testing.expectEqual(@intCast(u64, 4), u.version());
     try testing.expectEqual(@intCast(u64, 2), u.variant());
 }
+
+test "uuid random v4" {
+    const u = uuid.UUID.v4();
+    try testing.expectEqual(@intCast(u64, 4), u.version());
+    try testing.expectEqual(@intCast(u64, 2), u.variant());
+}

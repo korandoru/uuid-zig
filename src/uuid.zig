@@ -14,6 +14,7 @@
 
 const std = @import("std");
 const assert = std.debug.assert;
+const crypto = std.crypto;
 
 pub export fn add(a: i32, b: i32) i32 {
     return a + b;
@@ -40,6 +41,16 @@ pub const UUID = struct {
 
     pub fn new(msb: u64, lsb: u64) UUID {
         return UUID{ .msb = msb, .lsb = lsb };
+    }
+
+    pub fn v4() UUID {
+        var bytes: [16]u8 = undefined;
+        crypto.random.bytes(&bytes);
+        bytes[6] &= 0x0F; // clear version
+        bytes[6] |= 0x40; // set version to 4
+        bytes[8] &= 0x3F; // clear variant
+        bytes[8] |= 0x8F; // set to IETF variant 2
+        return from_bytes(&bytes);
     }
 
     fn format_unsigned_long(value: u64, shift: u4, buf: *[36]u8, offset: u32, len: u32) void {
