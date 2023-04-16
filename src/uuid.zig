@@ -71,4 +71,10 @@ pub const UUID = struct {
     pub fn version(self: UUID) u64 {
         return (self.msb >> 12) & 0x0F;
     }
+
+    pub fn variant(self: UUID) u64 {
+        const ulsb: u64 = self.lsb;
+        const ilsb: i64 = @bitCast(i64, self.lsb);
+        return (ulsb >> @intCast(u6, (64 - (ulsb >> 62)))) & @bitCast(u64, (ilsb >> 63));
+    }
 };
