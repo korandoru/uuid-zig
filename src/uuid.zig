@@ -25,6 +25,32 @@ pub const UUID = struct {
     lsb: u64,
 
     const digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+    const nibbles = init: {
+        var bytes: [256]u8 = undefined;
+        bytes['0'] = 0;
+        bytes['1'] = 1;
+        bytes['2'] = 2;
+        bytes['3'] = 3;
+        bytes['4'] = 4;
+        bytes['5'] = 5;
+        bytes['6'] = 6;
+        bytes['7'] = 7;
+        bytes['8'] = 8;
+        bytes['9'] = 9;
+        bytes['A'] = 10;
+        bytes['B'] = 11;
+        bytes['C'] = 12;
+        bytes['D'] = 13;
+        bytes['E'] = 14;
+        bytes['F'] = 15;
+        bytes['a'] = 10;
+        bytes['b'] = 11;
+        bytes['c'] = 12;
+        bytes['d'] = 13;
+        bytes['e'] = 14;
+        bytes['f'] = 15;
+        break :init bytes;
+    };
 
     fn from_bytes(data: []const u8) UUID {
         assert(data.len == 16);
@@ -37,6 +63,35 @@ pub const UUID = struct {
             lsb = (lsb << 8) | (b & 0xFF);
         }
         return UUID{ .msb = msb, .lsb = lsb };
+    }
+
+    fn parse_nibbles(name: []const u8, pos: usize) u64 {
+        const ch1 = name[pos];
+        const ch2 = name[pos + 1];
+        const ch3 = name[pos + 2];
+        const ch4 = name[pos + 3];
+        if ((ch1 | ch2 | ch3 | ch4) > 0xFF) {
+            return @bitCast(u64, @as(i64, -1));
+        } else {
+            const n1 = @intCast(u64, nibbles[ch1]);
+            const n2 = @intCast(u64, nibbles[ch2]);
+            const n3 = @intCast(u64, nibbles[ch3]);
+            const n4 = @intCast(u64, nibbles[ch4]);
+            return n1 << 12 | n2 << 8 | n3 << 4 | n4;
+        }
+    }
+
+    pub fn parse(name: []const u8) UUID {
+        assert(name.len == 36);
+        const msb1 = parse_nibbles(name, 0);
+        const msb2 = parse_nibbles(name, 4);
+        const msb3 = parse_nibbles(name, 9);
+        const msb4 = parse_nibbles(name, 14);
+        const lsb1 = parse_nibbles(name, 19);
+        const lsb2 = parse_nibbles(name, 24);
+        const lsb3 = parse_nibbles(name, 28);
+        const lsb4 = parse_nibbles(name, 32);
+        return new(msb1 << 48 | msb2 << 32 | msb3 << 16 | msb4, lsb1 << 48 | lsb2 << 32 | lsb3 << 16 | lsb4);
     }
 
     pub fn new(msb: u64, lsb: u64) UUID {
