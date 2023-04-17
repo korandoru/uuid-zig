@@ -4,6 +4,7 @@ This is a project implements UUID standard in Zig programming langauge.
 
 Currently, this project implements:
 
+* UUID v3 - name based
 * UUID v4 - pseudo randomly generated
 
 ## Usage

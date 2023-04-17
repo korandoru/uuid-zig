@@ -23,6 +23,13 @@ test "uuid initialization" {
     try testing.expect(u.get_lsb() == 0);
 }
 
+test "uuid given v3" {
+    const u = uuid.UUID.v3("korandoru");
+    try testing.expectFmt("8038f69c-f438-3396-90c9-32624ec5ee92", "{}", .{u});
+    try testing.expectEqual(@intCast(u64, 3), u.version());
+    try testing.expectEqual(@intCast(u64, 2), u.variant());
+}
+
 test "uuid given v4" {
     const u = uuid.UUID.new(17461568127633409033, 11710601912988811980);
     try testing.expectFmt("f253f3b2-5cdf-4409-a284-6a64f9b542cc", "{}", .{u});

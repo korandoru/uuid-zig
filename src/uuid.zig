@@ -98,13 +98,24 @@ pub const UUID = struct {
         return UUID{ .msb = msb, .lsb = lsb };
     }
 
+    pub fn v3(name: []const u8) UUID {
+        var bytes: [16]u8 = undefined;
+        const options: crypto.hash.Md5.Options = undefined;
+        crypto.hash.Md5.hash(name, bytes[0..], options);
+        bytes[6] &= 0x0F; // clear version
+        bytes[6] |= 0x30; // set version to 3
+        bytes[8] &= 0x3F; // clear variant
+        bytes[8] |= 0x80; // set to IETF variant 2
+        return from_bytes(&bytes);
+    }
+
     pub fn v4() UUID {
         var bytes: [16]u8 = undefined;
         crypto.random.bytes(&bytes);
         bytes[6] &= 0x0F; // clear version
         bytes[6] |= 0x40; // set version to 4
         bytes[8] &= 0x3F; // clear variant
-        bytes[8] |= 0x8F; // set to IETF variant 2
+        bytes[8] |= 0x80; // set to IETF variant 2
         return from_bytes(&bytes);
     }
 
