@@ -16,10 +16,6 @@ const std = @import("std");
 const assert = std.debug.assert;
 const crypto = std.crypto;
 
-pub export fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
-
 pub const UUID = struct {
     msb: u64,
     lsb: u64,
