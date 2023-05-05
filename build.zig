@@ -43,9 +43,10 @@ pub fn build(b: *std.build.Builder) void {
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 
-    const tests = b.addTest(.{ .root_source_file = .{ .path = "test/main.zig" } });
-    tests.addAnonymousModule("uuid", .{ .source_file = .{ .path = "src/uuid.zig" } });
+    const test_exe = b.addTest(.{ .root_source_file = .{ .path = "test/main.zig" } });
+    test_exe.addAnonymousModule("uuid", .{ .source_file = .{ .path = "src/uuid.zig" } });
+    const run_test = b.addRunArtifact(test_exe);
 
     const test_step = b.step("test", "Run library tests");
-    test_step.dependOn(&tests.step);
+    test_step.dependOn(&run_test.step);
 }
