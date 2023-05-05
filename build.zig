@@ -15,27 +15,26 @@
 const std = @import("std");
 
 pub fn build(b: *std.build.Builder) void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
-    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
 
-    // Standard release options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
-    const mode = b.standardReleaseOptions();
+    const lib = b.addStaticLibrary(.{
+        .name = "uuid",
+        .root_source_file = .{ .path = "src/uuid.zig" },
+        .target = .{},
+        .optimize = optimize,
+    });
+    b.installArtifact(lib);
 
-    const lib = b.addStaticLibrary("uuid", "src/uuid.zig");
-    lib.setBuildMode(mode);
-    lib.install();
+    const exe = b.addExecutable(.{
+        .name = "uuid-gen",
+        .root_source_file = .{ .path = "bin/main.zig" },
+        .target = .{},
+        .optimize = optimize,
+    });
+    exe.addAnonymousModule("uuid", .{ .source_file = .{ .path = "src/uuid.zig" } });
+    b.installArtifact(exe);
 
-    const exe = b.addExecutable("uuid-gen", "bin/main.zig");
-    exe.addPackagePath("uuid", "src/uuid.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-    exe.install();
-
-    const run_cmd = exe.run();
+    const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_cmd.addArgs(args);
@@ -44,10 +43,10 @@ pub fn build(b: *std.build.Builder) void {
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 
-    const tests = b.addTest("test/main.zig");
-    tests.addPackagePath("uuid", "src/uuid.zig");
-    tests.setBuildMode(mode);
+    const test_exe = b.addTest(.{ .root_source_file = .{ .path = "test/main.zig" } });
+    test_exe.addAnonymousModule("uuid", .{ .source_file = .{ .path = "src/uuid.zig" } });
+    const run_test = b.addRunArtifact(test_exe);
 
     const test_step = b.step("test", "Run library tests");
-    test_step.dependOn(&tests.step);
+    test_step.dependOn(&run_test.step);
 }
