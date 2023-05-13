@@ -18,9 +18,25 @@ on:
     branches: [ main ]
   push:
     branches: [ main ]
+  schedule:
+    - cron: '4 2 * * *'
+
+# Concurrency strategy:
+#   github.workflow: distinguish this workflow from others
+#   github.event_name: distinguish `push` event from `pull_request` event
+#   github.event.number: set to the number of the pull request if `pull_request` event
+#   github.run_id: otherwise, it's a `push` or `schedule` event, only cancel if we rerun the workflow
+#
+# Reference:
+#   https://docs.github.com/en/actions/using-jobs/using-concurrency
+#   https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.number || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   check:
+    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')
     name: Check
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +44,7 @@ jobs:
       - uses: korandoru/hawkeye@v2
 
   test:
+    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')
     strategy:
       fail-fast: false
       matrix:
@@ -47,7 +64,7 @@ jobs:
   required:
     name: Required
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ always() && ((github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')) }}
     needs:
       - check
       - test
