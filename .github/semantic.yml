@@ -39,4 +39,4 @@ types:
   - chore
   - revert
 
-targetUrl: https://github.com/korandoru/zig-uuid/blob/main/.github/semantic.yml
+targetUrl: https://github.com/korandoru/uuid-zig/blob/main/.github/semantic.yml

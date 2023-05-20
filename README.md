@@ -1,4 +1,4 @@
-# zig-uuid
+# uuid-zig
 
 This is a project implements UUID standard in Zig programming langauge.
 
@@ -11,8 +11,16 @@ Currently, this project implements:
 
 ### Build
 
+This library is built with zig 0.11.0-dev. You can import this library with:
+
 ```zig
-libOrExe.addPackagePath("uuid", "/path/to/zig-uuid/src/uuid.zig");
+libOrExe.addAnonymousModule("uuid", .{ .source_file = .{ .path = "/path/to/uuid-zig/src/uuid.zig" } });
+```
+
+Before 0.11.0, import this library with:
+
+```zig
+libOrExe.addPackagePath("uuid", "/path/to/uuid-zig/src/uuid.zig");
 ```
 
 ### Example

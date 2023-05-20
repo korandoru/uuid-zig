@@ -36,7 +36,7 @@ concurrency:
 
 jobs:
   check:
-    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')
+    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/uuid-zig')
     name: Check
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +44,7 @@ jobs:
       - uses: korandoru/hawkeye@v2
 
   test:
-    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')
+    if: (github.event_name != 'schedule') || (github.repository == 'korandoru/uuid-zig')
     strategy:
       fail-fast: false
       matrix:
@@ -64,7 +64,7 @@ jobs:
   required:
     name: Required
     runs-on: ubuntu-latest
-    if: ${{ always() && ((github.event_name != 'schedule') || (github.repository == 'korandoru/zig-uuid')) }}
+    if: ${{ always() && ((github.event_name != 'schedule') || (github.repository == 'korandoru/uuid-zig')) }}
     needs:
       - check
       - test
