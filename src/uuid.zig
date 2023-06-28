@@ -162,6 +162,6 @@ pub const UUID = struct {
     pub fn variant(self: UUID) u64 {
         const ulsb: u64 = self.lsb;
         const ilsb: i64 = @bitCast(self.lsb);
-        return (ulsb >> @intCast(64 - (ulsb >> 62))) & @as(u64, @bitCast((ilsb >> 63)));
+        return (ulsb >> @intCast(64 - (ulsb >> 62))) & @as(u64, @bitCast(ilsb >> 63));
     }
 };
