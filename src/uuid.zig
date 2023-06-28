@@ -67,12 +67,12 @@ pub const UUID = struct {
         const ch3 = name[pos + 2];
         const ch4 = name[pos + 3];
         if ((ch1 | ch2 | ch3 | ch4) > 0xFF) {
-            return @bitCast(u64, @as(i64, -1));
+            return @bitCast(@as(i64, -1));
         } else {
-            const n1 = @intCast(u64, nibbles[ch1]);
-            const n2 = @intCast(u64, nibbles[ch2]);
-            const n3 = @intCast(u64, nibbles[ch3]);
-            const n4 = @intCast(u64, nibbles[ch4]);
+            const n1: u64 = @intCast(nibbles[ch1]);
+            const n2: u64 = @intCast(nibbles[ch2]);
+            const n3: u64 = @intCast(nibbles[ch3]);
+            const n4: u64 = @intCast(nibbles[ch4]);
             return n1 << 12 | n2 << 8 | n3 << 4 | n4;
         }
     }
@@ -118,7 +118,7 @@ pub const UUID = struct {
     fn format_unsigned_long(value: u64, shift: u4, buf: *[36]u8, offset: u32, len: u32) void {
         var pos: u32 = offset + len;
         var val: u64 = value;
-        const radix: u32 = @intCast(u32, 1) << shift;
+        const radix: u32 = @as(u32, 1) << shift;
         const mask: u32 = radix - 1;
 
         assert(pos > offset); // do-while
@@ -161,7 +161,7 @@ pub const UUID = struct {
 
     pub fn variant(self: UUID) u64 {
         const ulsb: u64 = self.lsb;
-        const ilsb: i64 = @bitCast(i64, self.lsb);
-        return (ulsb >> @intCast(u6, (64 - (ulsb >> 62)))) & @bitCast(u64, (ilsb >> 63));
+        const ilsb: i64 = @bitCast(self.lsb);
+        return (ulsb >> @intCast(64 - (ulsb >> 62))) & @as(u64, @bitCast((ilsb >> 63)));
     }
 };
